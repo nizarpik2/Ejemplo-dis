@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package grpc;
 
-option go_package = "github.com/Sistemas-Distribuidos-2022-2/Ejemplo/proto";
+option go_package = "SD/LAB1/proto";
 
 message Message {
     string body = 1;

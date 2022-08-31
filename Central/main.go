@@ -2,9 +2,19 @@ package main
 
 import (
 	"fmt"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	amqp "github.com/rabbitmq/amqp091-go"
+	pb "github.com/Sistemas-Distribuidos-2022-2/Ejemplo/Proto"
 )
+
+type server struct {
+	pb.UnimplementedMessageServiceServer
+}
+
+func (s *server) Intercambio (_ context.Context, msg *pb.Message) (*pb.Message, error){
+	fmt.Println("mesaje sincrono")
+	return &pb.Message{body: msg.body,}, nil
+}
 
 func main () {
 	qName := "Emergencias"
@@ -32,4 +42,26 @@ func main () {
 	
 	<- noStop
 
+	hostS := "localhost"
+	
+	connS, grpc.Dial(host + ":50051", grpc.WithInsecure())
+
+	if err != nil {
+		panic("No se pudo conectar con el servidor" + err.Error())
+	}
+
+	defer connS.Close()
+
+	serviceCliente := pb.NewMessageServiceClient(connS)
+
+	serviceCliente.Intercambio(context.Background(), &pb.Message{
+		body: "Equipo listo?",
+		}
+	)
+
+	if err != nil {
+		panic("No se puede crear el mensaje " + err.Error())
+	}
+
+	fmt.Println()
 }

@@ -2,23 +2,25 @@ package main
 
 import (
 	"fmt"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	amqp "github.com/rabbitmq/amqp091-go"
+	"google.golang.org/grpc"
+	pb "github.com/Sistemas-Distribuidos-2022-2/Ejemplo/Proto"
 )
 
 func main() {
 	LabName := "Laboratiorio Pripyat"
 	qName := "Emergencias"
-	host := "localhost"
-	conn, err := amqp.Dial("amqp://guest:guest@"+host+":5672")
+	hostQ := "localhost"
+	connQ, err := amqp.Dial("amqp://guest:guest@"+host+":5672")
 	
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer conn.Close()
+	defer connQ.Close()
 
-	ch, err := conn.Channel()
+	ch, err := connQ.Channel()
 
 	if err != nil{
 		log.Fatal(err)
@@ -44,4 +46,16 @@ func main() {
 	}
 
 	fmt.Println(LabName)
+
+	listener, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		panic("La conexion no se pudo crear" + err.Error())
+	}
+
+	serv := grpc.NewServer()
+	pb.RegisterMessageServiceServer(serv, &server{})
+
+	if err = serv.Serve(listener); err != nil {
+		panic("El server no se pudo iniciar" + err.Error())
+	}
 }
