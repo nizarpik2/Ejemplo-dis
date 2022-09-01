@@ -12,10 +12,10 @@ Para poder comunicar los laboratorios con RabbitMQ les recomiendo que vean la si
  - https://www.rabbitmq.com/access-control.html
 
 Pero en resumen, debe crear otro usuario que en el caso de este ejemplo es tanto el nombre como la contraseña son
-test.
+"test".
 
- - rabbitmqctl add_user 'username' 'password'
+ - rabbitmqctl add_user 'test' 'test'
 
 Luego le entregan todos los permisos.
 
- - rabbitmqctl set_permissions "username" ".*" ".*" ".*"
+ - rabbitmqctl set_permissions "test" ".*" ".*" ".*"
