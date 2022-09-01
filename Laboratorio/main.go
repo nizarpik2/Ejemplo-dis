@@ -3,16 +3,27 @@ package main
 import (
 	"fmt"
 	"log"
+	"context"
+	"net"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
-	pb "github.com/Sistemas-Distribuidos-2022-2/Ejemplo/Proto"
+	pb "github.com/Kendovvul/Ejemplo/Proto"
 )
 
+type server struct {
+	pb.UnimplementedMessageServiceServer
+}
+
+func (s *server) Intercambio (ctx context.Context, msg *pb.Message) (*pb.Message, error){
+	fmt.Println(msg.Body)
+	return &pb.Message{Body: "NO",}, nil
+}
+
 func main() {
-	LabName := "Laboratiorio Pripyat"
-	qName := "Emergencias"
-	hostQ := "localhost"
-	connQ, err := amqp.Dial("amqp://guest:guest@"+host+":5672")
+	LabName := "Laboratiorio Pripyat" //nombre del laboratorio
+	qName := "Emergencias" //nombre de la cola
+	hostQ := "localhost" //ip del servidor de RabbitMQ
+	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //conexion con RabbitMQ
 	
 	if err != nil {
 		log.Fatal(err)
@@ -34,11 +45,12 @@ func main() {
 
 	fmt.Println(q)
 
+	//Mensaje enviado a la cola de RabbitMQ (Llamado de emergencia)
 	err = ch.Publish("", qName, false, false,
 		amqp.Publishing{
 			Headers: nil,
 			ContentType: "text/plain",
-			Body: []byte(LabName),
+			Body: []byte(LabName),  //Contenido del mensaje
 		})
 
 	if err != nil{
@@ -47,15 +59,16 @@ func main() {
 
 	fmt.Println(LabName)
 
-	listener, err := net.Listen("tcp", ":50051")
+	listener, err := net.Listen("tcp", ":50051") //conexion sincrona
 	if err != nil {
 		panic("La conexion no se pudo crear" + err.Error())
 	}
 
 	serv := grpc.NewServer()
-	pb.RegisterMessageServiceServer(serv, &server{})
-
-	if err = serv.Serve(listener); err != nil {
-		panic("El server no se pudo iniciar" + err.Error())
+	for {
+		pb.RegisterMessageServiceServer(serv, &server{})
+		if err = serv.Serve(listener); err != nil {
+			panic("El server no se pudo iniciar" + err.Error())
+		}
 	}
 }

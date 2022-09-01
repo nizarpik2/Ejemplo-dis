@@ -3,23 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"context"
+	"time"
 	amqp "github.com/rabbitmq/amqp091-go"
-	pb "github.com/Sistemas-Distribuidos-2022-2/Ejemplo/Proto"
+	"google.golang.org/grpc"
+	pb "github.com/Kendovvul/Ejemplo/Proto"
 )
-
-type server struct {
-	pb.UnimplementedMessageServiceServer
-}
-
-func (s *server) Intercambio (_ context.Context, msg *pb.Message) (*pb.Message, error){
-	fmt.Println("mesaje sincrono")
-	return &pb.Message{body: msg.body,}, nil
-}
 
 func main () {
 	qName := "Emergencias"
-	host := "localhost"
-	conn, err := amqp.Dial("amqp://guest:guest@"+host+":5672")
+	hostQ := "localhost"
+	hostS := "localhost"
+	conn, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //Conexion con RabbitMQ
 
 	if err != nil {log.Fatal(err)}
 	defer conn.Close()
@@ -28,40 +23,39 @@ func main () {
 	if err != nil{log.Fatal(err)}
 	defer ch.Close()
 
-	chDelivery, err := ch.Consume(qName, "", true, false, false, false, nil)
+	fmt.Println("Esperando Emergencias")
+	chDelivery, err := ch.Consume(qName, "", true, false, false, false, nil) //obtiene la cola de RabbitMQ
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Esperando Emergencias")
-	noStop := make(chan bool)
-	go func () {
-		for delivery := range chDelivery {
-			fmt.Println("Pedido de ayuda de " + string(delivery.Body))
+	
+	for delivery := range chDelivery {
+		
+		fmt.Println("Pedido de ayuda de " + string(delivery.Body)) //obtiene el primer mensaje de la cola
+		connS, err := grpc.Dial(hostS + ":50051", grpc.WithInsecure()) //crea la conexion sincrona con el laboratorio
+
+		if err != nil {
+			panic("No se pudo conectar con el servidor" + err.Error())
 		}
- 	}()
 	
-	<- noStop
-
-	hostS := "localhost"
+		defer connS.Close()
 	
-	connS, grpc.Dial(host + ":50051", grpc.WithInsecure())
+		serviceCliente := pb.NewMessageServiceClient(connS)
+	
+		for {
+			//envia el mensaje al laboratorio
+			res, err := serviceCliente.Intercambio(context.Background(), 
+				&pb.Message{
+					Body: "Equipo listo?",
+				})
+	
+			if err != nil {
+				panic("No se puede crear el mensaje " + err.Error())
+			}
 
-	if err != nil {
-		panic("No se pudo conectar con el servidor" + err.Error())
+			fmt.Println(res.Body) //respuesta del laboratorio
+			time.Sleep(5 * time.Second) //espera de 5 segundos
+		}
 	}
 
-	defer connS.Close()
-
-	serviceCliente := pb.NewMessageServiceClient(connS)
-
-	serviceCliente.Intercambio(context.Background(), &pb.Message{
-		body: "Equipo listo?",
-		}
-	)
-
-	if err != nil {
-		panic("No se puede crear el mensaje " + err.Error())
-	}
-
-	fmt.Println()
 }
