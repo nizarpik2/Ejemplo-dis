@@ -1,5 +1,7 @@
 # Ejemplo
 
+# Version ejecutable en local con docker o en una sola maquina con docker
+
 ### Compilar proto
 
 protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative Proto/message.proto
