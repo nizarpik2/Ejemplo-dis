@@ -4,13 +4,15 @@
 
 ### Compilar proto
 
-protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative Proto/message.proto
+    - protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative Proto/message.proto
 
 ### RabbitMQ Docker
 
-docker run -it --rm --name rabbitmq -p 5670:5672 -p 15670:15672 rabbitmq:3-management
-docker exec rabbitmq rabbitmqctl add_user 'test' 'test'
-docker exec rabbitmq rabbitmqctl set_permissions "test" "." "." ".*"
+    - docker run -it --rm --name rabbitmq -p 5670:5672 -p 15670:15672 rabbitmq:3-management
+
+#### Usuario (Puede que sea opcional, hacer solo si le da un error en el usuario y la contraseña)
+    - docker exec rabbitmq rabbitmqctl add_user 'test' 'test'
+    - docker exec rabbitmq rabbitmqctl set_permissions "test" "." "." ".*"
 
 ### docker
 
