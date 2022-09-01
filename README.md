@@ -7,6 +7,7 @@
 
 ### GO
 
-Ejecutar cada uno en una consola distinta
+Ejecutar cada uno en una consola distinta.
+
     - go run Central/main.go
     - go run Laboratorio/main.go
