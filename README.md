@@ -9,5 +9,10 @@
 
 Ejecutar cada uno en una consola distinta.
 
-    go run Central/main.go \\
+Para la central.
+    
+    go run Central/main.go
+
+Para el Laboratorio
+
     go run Laboratorio/main.go
