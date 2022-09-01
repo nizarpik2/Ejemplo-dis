@@ -30,6 +30,8 @@ Para ejecutar el contenedor con la Central
 
 #### Maquina 2
 Para levantar el contenedor
+
     docker build -t lab1 .
 Para ejecutar el contenedero con el Laboratorio
+
     docker run -it --rm -P -p 50051:50051 lab1:latest go run Laboratorio/main.go
