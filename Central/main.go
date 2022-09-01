@@ -14,7 +14,7 @@ func main () {
 	qName := "Emergencias" //Nombre de la cola
 	hostQ := "172.17.0.1"  //Host de RabbitMQ 172.17.0.1
 	hostS := "172.17.0.1" //Host de un Laboratorio
-	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5600") //Conexion con RabbitMQ
+	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5670") //Conexion con RabbitMQ
 
 	if err != nil {log.Fatal(err)}
 	defer connQ.Close()
