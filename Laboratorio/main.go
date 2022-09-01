@@ -22,28 +22,15 @@ func (s *server) Intercambio (ctx context.Context, msg *pb.Message) (*pb.Message
 func main() {
 	LabName := "Laboratiorio Pripyat" //nombre del laboratorio
 	qName := "Emergencias" //nombre de la cola
-	hostQ := "localhost" //ip del servidor de RabbitMQ
-	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //conexion con RabbitMQ
+	hostQ := "localhost" //ip del servidor de RabbitMQ 172.17.0.1
+	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5670") //conexion con RabbitMQ
 	
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	if err != nil {log.Fatal(err)}
 	defer connQ.Close()
 
 	ch, err := connQ.Channel()
-
-	if err != nil{
-		log.Fatal(err)
-	}
+	if err != nil{log.Fatal(err)}
 	defer ch.Close()
-	q, err := ch.QueueDeclare(qName, false, false, false, false, nil)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(q)
 
 	//Mensaje enviado a la cola de RabbitMQ (Llamado de emergencia)
 	err = ch.Publish("", qName, false, false,
