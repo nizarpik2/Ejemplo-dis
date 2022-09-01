@@ -11,17 +11,22 @@ import (
 )
 
 func main () {
-	qName := "Emergencias"
-	hostQ := "localhost"
-	hostS := "localhost"
-	conn, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //Conexion con RabbitMQ
+	qName := "Emergencias" //Nombre de la cola
+	hostQ := "172.17.0.1"  //Host de RabbitMQ 172.17.0.1
+	hostS := "172.17.0.1" //Host de un Laboratorio
+	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //Conexion con RabbitMQ
 
 	if err != nil {log.Fatal(err)}
-	defer conn.Close()
+	defer connQ.Close()
 
-	ch, err := conn.Channel()
+	ch, err := connQ.Channel()
 	if err != nil{log.Fatal(err)}
 	defer ch.Close()
+
+	q, err := ch.QueueDeclare(qName, false, false, false, false, nil) //Se crea la cola en RabbitMQ
+	if err != nil {log.Fatal(err)}
+
+	fmt.Println(q)
 
 	fmt.Println("Esperando Emergencias")
 	chDelivery, err := ch.Consume(qName, "", true, false, false, false, nil) //obtiene la cola de RabbitMQ
@@ -30,9 +35,9 @@ func main () {
 	}
 	
 	for delivery := range chDelivery {
-		
+		port := ":50051"  //puerto de la conexion con el laboratorio
 		fmt.Println("Pedido de ayuda de " + string(delivery.Body)) //obtiene el primer mensaje de la cola
-		connS, err := grpc.Dial(hostS + ":50051", grpc.WithInsecure()) //crea la conexion sincrona con el laboratorio
+		connS, err := grpc.Dial(hostS + port, grpc.WithInsecure()) //crea la conexion sincrona con el laboratorio
 
 		if err != nil {
 			panic("No se pudo conectar con el servidor" + err.Error())
