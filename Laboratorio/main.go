@@ -46,7 +46,7 @@ func main() {
 
 	fmt.Println(LabName)
 	port := ":50051"
-	listener, err := net.Listen("tcp", ´port) //conexion sincrona
+	listener, err := net.Listen("tcp", port) //conexion sincrona
 	if err != nil {
 		panic("La conexion no se pudo crear" + err.Error())
 	}
