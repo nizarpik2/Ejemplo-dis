@@ -11,6 +11,10 @@
     docker run -it --rm --name rabbitmq -p 5670:5672 -p 15670:15672 rabbitmq:3-management
 
 ### Programa principal en Docker
+Crear la imagen
+
+    docker build -t lab1 .
+
 Ejecutar en dos consolas distintas.
 
 Para la Central
