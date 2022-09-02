@@ -10,7 +10,7 @@
 
     docker run -it --rm --name rabbitmq -p 5670:5672 -p 15670:15672 rabbitmq:3-management
 
-### docker
+### Programa principal en Docker
 Ejecutar en dos consolas distintas.
 
 Para la Central
