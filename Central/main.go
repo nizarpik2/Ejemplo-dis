@@ -68,6 +68,7 @@ func main () {
 				//fmt.Println(res.Body) //respuesta del laboratorio
 				response := res.Body
 				fmt.Println(response)
+				fmt.Println(response == "NO")
 				time.Sleep(5 * time.Second) //espera de 5 segundos
 			}
 			fmt.Println("Ha terminado esta amenaza!") //dummy out for lab name
