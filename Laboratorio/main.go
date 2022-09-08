@@ -19,7 +19,14 @@ type server struct {
 
 func (s *server) Intercambio (ctx context.Context, msg *pb.Message) (*pb.Message, error){
 	fmt.Println(msg.Body)
-	return &pb.Message{Body: "SI",}, nil
+	// must dummy out
+	prob := rand.Intn(6)
+	fmt.Println(prob)
+	if (prob == 1 || prob == 2) {
+		return &pb.Message{Body: "NO",}, nil
+	} else{
+		return &pb.Message{Body: "SI",}, nil
+	}
 }
 
 func main() {
@@ -56,16 +63,9 @@ func main() {
 
 	serv := grpc.NewServer()
 	for {
-		// must dummy out
-		prob := rand.Intn(6)
-		fmt.Println(prob)
-		if (prob == 1 || prob == 2) {
-			fmt.Println("NO")
-		} else{
-			pb.RegisterMessageServiceServer(serv, &server{})
-			if err = serv.Serve(listener); err != nil {
-				panic("El server no se pudo iniciar" + err.Error())
-			}
+		pb.RegisterMessageServiceServer(serv, &server{})
+		if err = serv.Serve(listener); err != nil {
+			panic("El server no se pudo iniciar" + err.Error())
 		}
 	}
 }
