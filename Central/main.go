@@ -53,7 +53,7 @@ func main () {
 		
 			serviceCliente := pb.NewMessageServiceClient(connS)
 
-			var response string = "NO"
+			response := "NO"
 			for response == "NO" {
 				//envia el mensaje al laboratorio
 				res, err := serviceCliente.Intercambio(context.Background(), 
