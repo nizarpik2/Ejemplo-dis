@@ -33,33 +33,40 @@ func main () {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	var cant int = 2 // Declara la cantidad de equipos disponibles
 	
 	for delivery := range chDelivery {
-		port := ":50051"  //puerto de la conexion con el laboratorio
-		fmt.Println("Pedido de ayuda de " + string(delivery.Body)) //obtiene el primer mensaje de la cola
-		connS, err := grpc.Dial(hostS + port, grpc.WithInsecure()) //crea la conexion sincrona con el laboratorio
+		if cant == 0 {
+			fmt.Println("No hay equipos disponibles!")
+		} else{
+			cant -= 1
+			port := ":50051"  //puerto de la conexion con el laboratorio
+			fmt.Println("Pedido de ayuda de " + string(delivery.Body)) //obtiene el primer mensaje de la cola
+			connS, err := grpc.Dial(hostS + port, grpc.WithInsecure()) //crea la conexion sincrona con el laboratorio
 
-		if err != nil {
-			panic("No se pudo conectar con el servidor" + err.Error())
-		}
-	
-		defer connS.Close()
-	
-		serviceCliente := pb.NewMessageServiceClient(connS)
-	
-		for {
-			//envia el mensaje al laboratorio
-			res, err := serviceCliente.Intercambio(context.Background(), 
-				&pb.Message{
-					Body: "Equipo listo?",
-				})
-	
 			if err != nil {
-				panic("No se puede crear el mensaje " + err.Error())
+				panic("No se pudo conectar con el servidor" + err.Error())
 			}
+		
+			defer connS.Close()
+		
+			serviceCliente := pb.NewMessageServiceClient(connS)
+		
+			for {
+				//envia el mensaje al laboratorio
+				res, err := serviceCliente.Intercambio(context.Background(), 
+					&pb.Message{
+						Body: "Equipo listo?",
+					})
+		
+				if err != nil {
+					panic("No se puede crear el mensaje " + err.Error())
+				}
 
-			fmt.Println(res.Body) //respuesta del laboratorio
-			time.Sleep(5 * time.Second) //espera de 5 segundos
+				fmt.Println(res.Body) //respuesta del laboratorio
+				time.Sleep(5 * time.Second) //espera de 5 segundos
+			}
 		}
 	}
 
