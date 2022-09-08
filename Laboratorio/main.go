@@ -19,6 +19,7 @@ type server struct {
 
 func (s *server) Intercambio (ctx context.Context, msg *pb.Message) (*pb.Message, error){
 	fmt.Println(msg.Body)
+	fmt.Println("hola")
 	return &pb.Message{Body: "SI",}, nil
 }
 
