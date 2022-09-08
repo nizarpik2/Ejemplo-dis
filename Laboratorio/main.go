@@ -58,6 +58,7 @@ func main() {
 	for {
 		// must dummy out
 		prob := rand.Intn(6)
+		fmt.Println(prob)
 		if (prob == 1 || prob == 2) {
 			fmt.Println("NO")
 		} else{
