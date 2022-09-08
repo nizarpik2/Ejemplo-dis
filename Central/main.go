@@ -52,8 +52,9 @@ func main () {
 			defer connS.Close()
 		
 			serviceCliente := pb.NewMessageServiceClient(connS)
-		
-			for {
+
+			response = "NO"
+			for response == "NO" {
 				//envia el mensaje al laboratorio
 				res, err := serviceCliente.Intercambio(context.Background(), 
 					&pb.Message{
@@ -64,9 +65,12 @@ func main () {
 					panic("No se puede crear el mensaje " + err.Error())
 				}
 
-				fmt.Println(res.Body) //respuesta del laboratorio
+				//fmt.Println(res.Body) //respuesta del laboratorio
+				response := res.Body
+				fmt.Println(response)
 				time.Sleep(5 * time.Second) //espera de 5 segundos
 			}
+			fmt.Println("Ha terminado esta amenaza!") //dummy out for lab name
 		}
 	}
 
