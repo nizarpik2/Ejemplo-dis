@@ -11,6 +11,7 @@ import (
 	pb "github.com/Kendovvul/Ejemplo/Proto"
 )
 
+/*
 // Struct de contador para escuadrones pseudosiensia
 type SafeCounter struct {
 	mu sync.Mutex
@@ -43,7 +44,9 @@ func (c *SafeCounter) Value(key string) int {
 // Inicializa escuadrones
 var c = SafeCounter{v: make(map[string]int)}
 
-func central () {
+*/
+
+func central (squad string) {
 	qName := "Emergencias" //Nombre de la cola
 	hostQ := "172.17.0.1"  //Host de RabbitMQ 172.17.0.1
 	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5670") //Conexion con RabbitMQ
@@ -121,7 +124,7 @@ func central () {
 					panic("No se puede crear el mensaje " + err.Error())
 				}
 				response := res.Body
-				fmt.Println(response)
+				fmt.Println("Status " + squad + ": " + response)
 				if response == "SI"{
 					serviceCliente.Intercambio(context.Background(), &pb.Message{Body: "STOP MENACE",})
 					break
@@ -138,8 +141,6 @@ func central () {
 
 func main(){
 	// Inicializar valor de squad
-	c.Inc("a")
-	c.Inc("b")
-	go central()
-	central()
+	go central("SQUAD A")
+	central("SQUAD B")
 }
