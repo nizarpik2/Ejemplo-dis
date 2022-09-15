@@ -11,7 +11,7 @@ import (
 	pb "github.com/Kendovvul/Ejemplo/Proto"
 )
 
-// Struct de contador para escuadrones
+// Struct de contador para escuadrones pseudosiensia
 type SafeCounter struct {
 	mu sync.Mutex
 	v  map[string]int
@@ -61,7 +61,7 @@ func central () {
 	fmt.Println(q)
 
 	fmt.Println("Esperando Emergencias")
-	chDelivery, err := ch.Consume(qName, "", true, false, false, false, nil) //obtiene la cola de RabbitMQ
+	chDelivery, err := ch.Consume(qName, "", false, false, false, false, nil) //obtiene la cola de RabbitMQ AutoACK fols 3er parametro
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -128,6 +128,7 @@ func central () {
 				}
 			}
 			connS.Close()
+			delivery.Ack() //ACK cuando se resuelve la amenaza
 			fmt.Println("Ha terminado la amenaza en " + string(delivery.Body)) //dummy out for lab name
 		}
 		time.Sleep(1 * time.Second)
