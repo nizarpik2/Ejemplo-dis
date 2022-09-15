@@ -104,18 +104,18 @@ func central (squad string) {
 			if err != nil {
 				panic("No se pudo conectar con el servidor" + err.Error())
 			}
-
-			res, err := serviceCliente.Intercambio(context.Background(), &pb.Message{Body: squad,})
 			
 			if err != nil {
 				panic("No se puede crear el mensaje " + err.Error())
 			}
-
-			fmt.Println("Se envía escuadra " + squad + " a " + string(delivery.Body) + ".")
 		
 			//defer connS.Close()
 		
 			serviceCliente := pb.NewMessageServiceClient(connS)
+
+			res, err := serviceCliente.Intercambio(context.Background(), &pb.Message{Body: squad,})
+
+			fmt.Println("Se envía escuadra " + squad + " a " + string(delivery.Body) + ".")
 			
 			// Ciclo de contención de amenaza
 			for {
