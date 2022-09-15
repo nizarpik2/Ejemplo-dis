@@ -104,6 +104,14 @@ func central (squad string) {
 			if err != nil {
 				panic("No se pudo conectar con el servidor" + err.Error())
 			}
+
+			res, err := serviceCliente.Intercambio(context.Background(), &pb.Message{Body: squad,})
+			
+			if err != nil {
+				panic("No se puede crear el mensaje " + err.Error())
+			}
+
+			fmt.Println("Se envía escuadra " + squad + " a " + string(delivery.Body) + ".")
 		
 			//defer connS.Close()
 		
@@ -131,7 +139,7 @@ func central (squad string) {
 			}
 			connS.Close()
 			delivery.Ack(false) //ACK cuando se resuelve la amenaza
-			fmt.Println("Ha terminado la amenaza en " + string(delivery.Body)) //dummy out for lab name
+			fmt.Println("Retorno a central " + squad + ", conexión " + string(delivery.Body) + " cerrada.") //dummy out for lab name
 		}
 		time.Sleep(1 * time.Second)
 	}
