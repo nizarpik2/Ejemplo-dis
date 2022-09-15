@@ -19,13 +19,17 @@ type server struct {
 var serv *grpc.Server
 
 func (s *server) Intercambio (ctx context.Context, msg *pb.Message) (*pb.Message, error){
+	if (msg.Body == "SQUAD A") || (msg.Body == "SQUAD B"){
+		fmt.Println("Llega Escuadrón " + msg.Body + ", conteniendo estallido...")
+		return &pb.Message{Body: "",}, nil
+	}
 	if msg.Body == "STOP MENACE"{
 		serv.Stop()
 		return &pb.Message{Body: "",}, nil
 	}
 
 	if msg.Body == "Equipo listo?"{
-		fmt.Print("Revisando estado Escuadrón: [LISTO / NO LISTO] ")
+		fmt.Print("Revisando estado Escuadrón: ")
 		prob := rand.Intn(5)
 		if (prob == 0 || prob == 1) {
 			fmt.Print("NO LISTO\n")
@@ -57,7 +61,7 @@ func main() {
 
 	// Ciclo de llamados de emergencia
 	for{
-		fmt.Print("Analizando estado Laboratorio: [ ESTALLIDO / OK ] ")
+		fmt.Print("Analizando estado Laboratorio: ")
 		time.Sleep(5 * time.Second) //espera de 5 segundos
 		prob := rand.Intn(5)
 		if (prob != 0) {
