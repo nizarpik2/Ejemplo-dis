@@ -46,7 +46,6 @@ var c = SafeCounter{v: make(map[string]int)}
 func central () {
 	qName := "Emergencias" //Nombre de la cola
 	hostQ := "172.17.0.1"  //Host de RabbitMQ 172.17.0.1
-	hostS := "dist098" //Host de un Laboratorio
 	connQ, err := amqp.Dial("amqp://guest:guest@"+hostQ+":5672") //Conexion con RabbitMQ
 
 	if err != nil {log.Fatal(err)}
@@ -79,15 +78,19 @@ func central () {
 			port := "0000"
 			// Puerto de la conexion con el laboratorio
 			if string(delivery.Body) == "Laboratorio Pripyat"{
+				hostS := "dist097" //Host de un Laboratorio
 				port = ":50051"
 			}
 			if string(delivery.Body) == "Laboratorio Kampala"{
+				hostS := "dist098" //Host de un Laboratorio
 				port = ":50052"
 			}
 			if string(delivery.Body) == "Laboratorio Renca"{
+				hostS := "dist099" //Host de un Laboratorio
 				port = ":50053"
 			}
 			if string(delivery.Body) == "Laboratorio Pohang"{
+				hostS := "dist100" //Host de un Laboratorio
 				port = ":50054"
 			}
 			// Obtiene el primer mensaje de la cola
