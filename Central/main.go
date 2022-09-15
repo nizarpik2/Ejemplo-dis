@@ -113,7 +113,7 @@ func central (squad string) {
 		
 			serviceCliente := pb.NewMessageServiceClient(connS)
 
-			res, err := serviceCliente.Intercambio(context.Background(), &pb.Message{Body: squad,})
+			serviceCliente.Intercambio(context.Background(), &pb.Message{Body: squad,})
 
 			fmt.Println("Se envía escuadra " + squad + " a " + string(delivery.Body) + ".")
 			
