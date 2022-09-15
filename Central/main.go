@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"log"
 	"context"
 	"time"
@@ -70,7 +69,7 @@ func central (squad string) {
 	}
 
 	for delivery := range chDelivery {
-		if (c.Value("a") == 0) && (c.Value("b") == 0) {
+		if (1 == 2) {
 			fmt.Println("No hay equipos disponibles!")
 			/*
 			for cant == 0{
