@@ -128,7 +128,7 @@ func central () {
 				}
 			}
 			connS.Close()
-			delivery.Ack() //ACK cuando se resuelve la amenaza
+			delivery.Ack(false) //ACK cuando se resuelve la amenaza
 			fmt.Println("Ha terminado la amenaza en " + string(delivery.Body)) //dummy out for lab name
 		}
 		time.Sleep(1 * time.Second)
