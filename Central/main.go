@@ -76,21 +76,22 @@ func central () {
 			*/
 		} else{
 			port := "0000"
+			hostS := "default"
 			// Puerto de la conexion con el laboratorio
 			if string(delivery.Body) == "Laboratorio Pripyat"{
-				hostS := "dist097" //Host de un Laboratorio
+				hostS = "dist097" //Host de un Laboratorio
 				port = ":50051"
 			}
 			if string(delivery.Body) == "Laboratorio Kampala"{
-				hostS := "dist098" //Host de un Laboratorio
+				hostS = "dist098" //Host de un Laboratorio
 				port = ":50052"
 			}
 			if string(delivery.Body) == "Laboratorio Renca"{
-				hostS := "dist099" //Host de un Laboratorio
+				hostS = "dist099" //Host de un Laboratorio
 				port = ":50053"
 			}
 			if string(delivery.Body) == "Laboratorio Pohang"{
-				hostS := "dist100" //Host de un Laboratorio
+				hostS = "dist100" //Host de un Laboratorio
 				port = ":50054"
 			}
 			// Obtiene el primer mensaje de la cola
