@@ -5,45 +5,11 @@ import (
 	"log"
 	"context"
 	"time"
+	"io/ioutil"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
 	pb "github.com/Kendovvul/Ejemplo/Proto"
 )
-
-/*
-// Struct de contador para escuadrones pseudosiensia
-type SafeCounter struct {
-	mu sync.Mutex
-	v  map[string]int
-}
-
-// Inc increments the counter for the given key.
-func (c *SafeCounter) Inc(key string) {
-	c.mu.Lock()
-	// Lock so only one goroutine at a time can access the map c.v.
-	c.v[key]++
-	c.mu.Unlock()
-}
-
-func (c *SafeCounter) Dec(key string) {
-	c.mu.Lock()
-	// Lock so only one goroutine at a time can access the map c.v.
-	c.v[key]--
-	c.mu.Unlock()
-}
-
-// Value returns the current value of the counter for the given key.
-func (c *SafeCounter) Value(key string) int {
-	c.mu.Lock()
-	// Lock so only one goroutine at a time can access the map c.v.
-	defer c.mu.Unlock()
-	return c.v[key]
-}
-
-// Inicializa escuadrones
-var c = SafeCounter{v: make(map[string]int)}
-
-*/
 
 func central (squad string) {
 	qName := "Emergencias" //Nombre de la cola
@@ -117,6 +83,8 @@ func central (squad string) {
 
 			fmt.Println("Se envía escuadra " + squad + " a " + string(delivery.Body) + ".")
 			
+			var consultas int = 0
+
 			// Ciclo de contención de amenaza
 			for {
 				//espera de 5 segundos
@@ -127,6 +95,8 @@ func central (squad string) {
 						Body: "Equipo listo?",
 					})
 
+					consultas += 1
+
 				if err != nil {
 					panic("No se puede crear el mensaje " + err.Error())
 				}
@@ -134,6 +104,12 @@ func central (squad string) {
 				fmt.Println("Status " + squad + ": " + response)
 				if response == "SI"{
 					serviceCliente.Intercambio(context.Background(), &pb.Message{Body: "STOP MENACE",})
+					var escrito string
+					escrito = string(delivery.Body) + "; " + consultas + "\n" //formato (NombreLab;CantidadDeConsultas)
+					err := ioutil.WriteFile("SOLICITUDES.txt", escrito, 0644) //Si no existe lo crea (0644) y sobre escribe, []byte(escrito si no funciona)
+					if err != nil {
+						log.Fatal(err)
+					}
 					break
 				}
 			}
@@ -147,7 +123,6 @@ func central (squad string) {
 }
 
 func main(){
-	// Inicializar valor de squad
 	go central("SQUAD A")
 	central("SQUAD B")
 }
