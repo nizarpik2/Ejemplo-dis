@@ -106,9 +106,14 @@ func central (squad string) {
 					serviceCliente.Intercambio(context.Background(), &pb.Message{Body: "STOP MENACE",})
 					var escrito string
 					escrito = string(delivery.Body) + "; " + consultas + "\n" //formato (NombreLab;CantidadDeConsultas)
-					err := ioutil.WriteFile("SOLICITUDES.txt", escrito, 0644) //Si no existe lo crea (0644) y sobre escribe, []byte(escrito si no funciona)
+					f, err := os.OpenFile("SOLICITUDES.txt",
+					os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						log.Fatal(err)
+						log.Println(err)
+					}
+					defer f.Close()
+					if _, err := f.WriteString(byte[](escrito)); err != nil {
+						log.Println(err)
 					}
 					break
 				}
