@@ -112,7 +112,7 @@ func central (squad string) {
 						log.Println(err)
 					}
 					defer f.Close()
-					if _, err := f.WriteString(byte[](escrito)); err != nil {
+					if _, err := f.WriteString([]byte(escrito)); err != nil {
 						log.Println(err)
 					}
 					break
