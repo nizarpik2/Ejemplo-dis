@@ -105,7 +105,7 @@ func central (squad string) {
 				if response == "SI"{
 					serviceCliente.Intercambio(context.Background(), &pb.Message{Body: "STOP MENACE",})
 					var escrito string
-					escrito = string(delivery.Body) + "; " + consultas + "\n" //formato (NombreLab;CantidadDeConsultas)
+					escrito = string(delivery.Body) + "; " + string(consultas) + "\n" //formato (NombreLab;CantidadDeConsultas)
 					f, err := os.OpenFile("SOLICITUDES.txt",
 					os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
